@@ -123,7 +123,6 @@ $tipoAtual =
     $_POST['tipo']
     ?? $veiculo['tipo'];
 
-// Valores usados internamente e textos exibidos
 $tipos = [
     'Carro' => 'Carro',
     'Moto' => 'Moto',
