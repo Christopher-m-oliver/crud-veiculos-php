@@ -18,6 +18,12 @@ $stmt = $pdo->query("
 
 $veiculos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$tiposExibicao = [
+    'Carro' => 'Carro',
+    'Moto' => 'Moto',
+    'Caminhao' => 'Caminhão'
+];
+
 $titulo = 'Veículos';
 
 require_once '../includes/header.php';
@@ -72,7 +78,9 @@ require_once '../includes/header.php';
                 </td>
 
                 <td>
-                    <?= htmlspecialchars($veiculo['tipo']) ?>
+                    <?= htmlspecialchars(
+                        $tiposExibicao[$veiculo['tipo']] ?? $veiculo['tipo']
+                    ) ?>
                 </td>
 
                 <td class="actions">
