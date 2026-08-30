@@ -30,3 +30,6 @@ INSERT INTO marcas (marca) VALUES
 ('Volkswagen'),
 ('Chevrolet'),
 ('Ford');
+
+INSERT INTO usuarios (usuario, senha) VALUES
+('admin', '$2y$10$q9KXV8OoD6z1afm2ghH80.xt37lGhrlGFlJz0Nhr4nNgMwCf0pRm6');

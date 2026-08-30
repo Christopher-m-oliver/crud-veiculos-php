@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="login-card">
 
-        <h1>AutoManager</h1>
+        <h1>MotorHUB</h1>
         <p>Entre para acessar o sistema.</p>
 
         <?php if ($erro): ?>
