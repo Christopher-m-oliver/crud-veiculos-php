@@ -48,6 +48,7 @@ O projeto possui autenticação de usuário, CRUD de veículos e CRUD de marcas,
 │   ├── editar.php
 │   └── excluir.php
 ├── database.sql
+├── demo-sql-injection.php
 ├── docker-compose.yml
 ├── index.php
 ├── login.php
@@ -123,6 +124,29 @@ A tabela `veiculos` possui uma chave estrangeira para a tabela `marcas`.
 - O projeto foi desenvolvido para fins acadêmicos.
 - O ambiente de desenvolvimento utiliza Docker para executar PHP, MySQL e phpMyAdmin.
 - As senhas dos usuários são armazenadas utilizando hash e verificadas com `password_verify()`.
+
+## Demonstração de SQL Injection
+
+O projeto inclui uma página didática para demonstrar a diferença entre uma consulta SQL vulnerável e uma consulta parametrizada utilizando **PDO**.
+
+### Arquivo
+* `demo-sql-injection.php`
+
+### Modos de Funcionamento
+* **Modo vulnerável:** Concatena diretamente a entrada do usuário na consulta SQL.
+* **Modo protegido:** Utiliza `PDO::prepare()` e parâmetros separados da estrutura da consulta.
+
+> [!CAUTION]
+> A implementação vulnerável existe exclusivamente para fins acadêmicos e deve ser executada apenas em ambiente local de demonstração.
+
+### Como Acessar
+1. Realize a **autenticação no sistema** (é necessário estar autenticado).
+2. Acesse a URL no navegador:
+
+   ```text
+   http://localhost:8080/demo-sql-injection.php
+   ```
+
 
 ## Autor
 
