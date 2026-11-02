@@ -70,7 +70,7 @@ require_once '../includes/header.php';
 
 <?php if ($erro): ?>
 
-    <div class="error">
+    <div class="alert alert-erro">
         <?= htmlspecialchars($erro) ?>
     </div>
 

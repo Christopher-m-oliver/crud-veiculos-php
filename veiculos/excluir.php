@@ -2,19 +2,49 @@
 
 require_once '../includes/auth.php';
 require_once '../config/database.php';
+require_once '../includes/flash.php';
+require_once '../includes/csrf.php';
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-if (!$id) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: index.php');
     exit;
 }
 
-$stmt = $pdo->prepare(
-    'DELETE FROM veiculos WHERE id = ?'
+if (!csrfValido()) {
+    flashDefinir('erro', 'Requisição inválida. Tente novamente.');
+    header('Location: index.php');
+    exit;
+}
+
+$id = filter_input(
+    INPUT_POST,
+    'id',
+    FILTER_VALIDATE_INT,
+    ['options' => ['min_range' => 1]]
 );
 
-$stmt->execute([$id]);
+if (!$id) {
+    flashDefinir('erro', 'Veículo inválido.');
+    header('Location: index.php');
+    exit;
+}
+
+try {
+
+    $stmt = $pdo->prepare('DELETE FROM veiculos WHERE id = ?');
+    $stmt->execute([$id]);
+
+    if ($stmt->rowCount() > 0) {
+        flashDefinir('sucesso', 'Veículo excluído com sucesso.');
+    } else {
+        flashDefinir('erro', 'Veículo não encontrado.');
+    }
+
+} catch (PDOException $e) {
+
+    error_log('Erro ao excluir veículo: ' . $e->getMessage());
+    flashDefinir('erro', 'Não foi possível excluir o veículo.');
+}
 
 header('Location: index.php');
 exit;

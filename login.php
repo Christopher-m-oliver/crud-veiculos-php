@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>Entre para acessar o sistema.</p>
 
         <?php if ($erro): ?>
-            <div class="error">
+            <div class="alert alert-erro">
                 <?= htmlspecialchars($erro) ?>
             </div>
         <?php endif; ?>

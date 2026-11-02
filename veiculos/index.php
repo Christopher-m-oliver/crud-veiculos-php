@@ -2,6 +2,8 @@
 
 require_once '../includes/auth.php';
 require_once '../config/database.php';
+require_once '../includes/csrf.php';
+require_once '../includes/validacao.php';
 
 $stmt = $pdo->query("
     SELECT
@@ -17,12 +19,6 @@ $stmt = $pdo->query("
 ");
 
 $veiculos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$tiposExibicao = [
-    'Carro' => 'Carro',
-    'Moto' => 'Moto',
-    'Caminhao' => 'Caminhão'
-];
 
 $titulo = 'Veículos';
 
@@ -57,29 +53,29 @@ require_once '../includes/header.php';
 
         <tbody>
 
+        <?php if (!$veiculos): ?>
+
+            <tr>
+                <td colspan="6">Nenhum veículo cadastrado.</td>
+            </tr>
+
+        <?php endif; ?>
+
         <?php foreach ($veiculos as $veiculo): ?>
 
             <tr>
 
-                <td>
-                    <?= htmlspecialchars($veiculo['modelo']) ?>
-                </td>
+                <td><?= htmlspecialchars($veiculo['modelo']) ?></td>
 
-                <td>
-                    <?= htmlspecialchars($veiculo['marca']) ?>
-                </td>
+                <td><?= htmlspecialchars($veiculo['marca']) ?></td>
 
-                <td>
-                    <?= $veiculo['potencia'] ?> cv
-                </td>
+                <td><?= (int) $veiculo['potencia'] ?> cv</td>
 
-                <td>
-                    <?= $veiculo['ano_fabricacao'] ?>
-                </td>
+                <td><?= (int) $veiculo['ano_fabricacao'] ?></td>
 
                 <td>
                     <?= htmlspecialchars(
-                        $tiposExibicao[$veiculo['tipo']] ?? $veiculo['tipo']
+                        TIPOS_VEICULO[$veiculo['tipo']] ?? $veiculo['tipo']
                     ) ?>
                 </td>
 
@@ -87,18 +83,23 @@ require_once '../includes/header.php';
 
                     <a
                         class="btn btn-secondary"
-                        href="editar.php?id=<?= $veiculo['id'] ?>"
+                        href="editar.php?id=<?= (int) $veiculo['id'] ?>"
                     >
                         Editar
                     </a>
 
-                    <a
-                        class="btn btn-danger"
-                        href="excluir.php?id=<?= $veiculo['id'] ?>"
-                        onclick="return confirm('Deseja excluir este veículo?')"
+                    <form
+                        class="inline"
+                        method="POST"
+                        action="excluir.php"
+                        onsubmit="return confirm('Deseja excluir este veículo?')"
                     >
-                        Excluir
-                    </a>
+                        <?= csrfCampo() ?>
+                        <input type="hidden" name="id" value="<?= (int) $veiculo['id'] ?>">
+                        <button class="btn btn-danger" type="submit">
+                            Excluir
+                        </button>
+                    </form>
 
                 </td>
 

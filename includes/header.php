@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= $titulo ?? 'Sistema de Veículos' ?></title>
+    <title><?= htmlspecialchars($titulo ?? 'Sistema de Veículos') ?></title>
 
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -32,3 +32,8 @@
 </header>
 
 <main class="container">
+
+<?php
+require_once __DIR__ . '/flash.php';
+flashExibir();
+?>
