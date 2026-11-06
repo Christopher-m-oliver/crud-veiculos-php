@@ -2,6 +2,7 @@
 
 require_once '../includes/auth.php';
 require_once '../config/database.php';
+require_once '../includes/upload.php';
 require_once '../includes/flash.php';
 require_once '../includes/csrf.php';
 
@@ -31,12 +32,22 @@ if (!$id) {
 
 try {
 
+    $stmt = $pdo->prepare('SELECT foto FROM veiculos WHERE id = ?');
+    $stmt->execute([$id]);
+
+    $foto = $stmt->fetchColumn();
+
     $stmt = $pdo->prepare('DELETE FROM veiculos WHERE id = ?');
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() > 0) {
+
+        removerFoto(is_string($foto) ? $foto : null);
+
         flashDefinir('sucesso', 'Veículo excluído com sucesso.');
+
     } else {
+
         flashDefinir('erro', 'Veículo não encontrado.');
     }
 
