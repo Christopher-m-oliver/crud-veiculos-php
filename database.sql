@@ -19,7 +19,7 @@ CREATE TABLE veiculos (
     potencia INT NOT NULL,
     ano_fabricacao INT NOT NULL,
     tipo ENUM('Carro', 'Moto', 'Caminhao') NOT NULL,
-
+    foto VARCHAR(255) NULL,
     FOREIGN KEY (marca_id)
         REFERENCES marcas(id)
 );

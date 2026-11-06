@@ -4,6 +4,7 @@ require_once '../includes/auth.php';
 require_once '../config/database.php';
 require_once '../includes/csrf.php';
 require_once '../includes/validacao.php';
+require_once '../includes/upload.php';
 
 $stmt = $pdo->query("
     SELECT
@@ -12,6 +13,7 @@ $stmt = $pdo->query("
         v.potencia,
         v.ano_fabricacao,
         v.tipo,
+        v.foto,
         m.marca
     FROM veiculos v
     INNER JOIN marcas m ON v.marca_id = m.id
@@ -42,6 +44,7 @@ require_once '../includes/header.php';
 
         <thead>
             <tr>
+                <th>Foto</th>
                 <th>Modelo</th>
                 <th>Marca</th>
                 <th>Potência</th>
@@ -56,14 +59,29 @@ require_once '../includes/header.php';
         <?php if (!$veiculos): ?>
 
             <tr>
-                <td colspan="6">Nenhum veículo cadastrado.</td>
+                <td colspan="7">Nenhum veículo cadastrado.</td>
             </tr>
 
         <?php endif; ?>
 
         <?php foreach ($veiculos as $veiculo): ?>
 
+            <?php $urlFoto = urlFoto($veiculo['foto']); ?>
+
             <tr>
+
+                <td>
+                    <?php if ($urlFoto): ?>
+                        <img
+                            class="foto-miniatura"
+                            src="<?= htmlspecialchars($urlFoto) ?>"
+                            alt="Foto de <?= htmlspecialchars($veiculo['modelo']) ?>"
+                            loading="lazy"
+                        >
+                    <?php else: ?>
+                        <span class="sem-foto">Sem foto</span>
+                    <?php endif; ?>
+                </td>
 
                 <td><?= htmlspecialchars($veiculo['modelo']) ?></td>
 

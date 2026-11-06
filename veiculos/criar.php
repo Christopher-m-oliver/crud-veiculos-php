@@ -3,6 +3,7 @@
 require_once '../includes/auth.php';
 require_once '../config/database.php';
 require_once '../includes/validacao.php';
+require_once '../includes/upload.php';
 require_once '../includes/flash.php';
 require_once '../includes/csrf.php';
 
@@ -22,21 +23,39 @@ $valores = [
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    if (!csrfValido()) {
+    if (postExcedeuLimite()) {
+
+        $erros['geral'] = 'O envio excede o tamanho máximo permitido pelo servidor.';
+
+    } elseif (!csrfValido()) {
 
         $erros['geral'] = 'Requisição inválida. Recarregue a página e tente novamente.';
 
     } else {
 
-        // validação sempre no server, independente do html
+        // Validação SEMPRE no servidor, independente do HTML
         $resultado = validarVeiculo($pdo, $_POST);
 
         $valores = $resultado['valores'];
         $erros   = $resultado['erros'];
 
+        if (fotoEnviada()) {
+            $erroFoto = validarFoto($_FILES['foto']);
+
+            if ($erroFoto !== null) {
+                $erros['foto'] = $erroFoto;
+            }
+        }
+
         if (!$erros) {
 
+            $nomeFoto = null;
+
             try {
+
+                if (fotoEnviada()) {
+                    $nomeFoto = salvarFoto($_FILES['foto']);
+                }
 
                 $stmt = $pdo->prepare("
                     INSERT INTO veiculos (
@@ -44,9 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         marca_id,
                         potencia,
                         ano_fabricacao,
-                        tipo
+                        tipo,
+                        foto
                     )
-                    VALUES (?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?)
                 ");
 
                 $stmt->execute([
@@ -55,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $resultado['dados']['potencia'],
                     $resultado['dados']['ano_fabricacao'],
                     $resultado['dados']['tipo'],
+                    $nomeFoto,
                 ]);
 
                 flashDefinir('sucesso', 'Veículo cadastrado com sucesso.');
@@ -63,8 +84,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             } catch (PDOException $e) {
 
+                removerFoto($nomeFoto);
+
                 error_log('Erro ao cadastrar veículo: ' . $e->getMessage());
                 $erros['geral'] = 'Não foi possível salvar o veículo. Tente novamente.';
+
+            } catch (RuntimeException $e) {
+
+                error_log('Erro ao gravar foto: ' . $e->getMessage());
+                $erros['geral'] = 'Não foi possível gravar a imagem. Tente novamente.';
             }
         }
     }
@@ -88,7 +116,7 @@ require_once '../includes/header.php';
     </div>
 <?php endif; ?>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
     <?= csrfCampo() ?>
 
@@ -168,6 +196,17 @@ require_once '../includes/header.php';
         <?= erroCampo($erros, 'tipo') ?>
 
     </fieldset>
+
+    <label for="foto">Foto (opcional)</label>
+
+    <input
+        type="file"
+        id="foto"
+        name="foto"
+        accept="image/jpeg,image/png,image/webp"
+    >
+    <small>JPG, PNG ou WebP, até 2 MB.</small>
+    <?= erroCampo($erros, 'foto') ?>
 
     <button class="btn" type="submit">Cadastrar</button>
 

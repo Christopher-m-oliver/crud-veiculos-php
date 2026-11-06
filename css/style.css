@@ -259,3 +259,38 @@ footer {
 .login-btn {
     width: 100%;
 }
+
+.foto-atual {
+    display: block;
+    max-width: 240px;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin: 0 0 12px;
+}
+
+.checkbox-linha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    margin-bottom: 12px;
+}
+
+.checkbox-linha input {
+    width: auto;
+    margin: 0;
+}
+
+.foto-miniatura {
+    display: block;
+    width: 64px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.sem-foto {
+    color: #64748b;
+    font-size: 0.875rem;
+}
