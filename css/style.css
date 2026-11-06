@@ -281,3 +281,16 @@ footer {
     width: auto;
     margin: 0;
 }
+
+.foto-miniatura {
+    display: block;
+    width: 64px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.sem-foto {
+    color: #64748b;
+    font-size: 0.875rem;
+}
